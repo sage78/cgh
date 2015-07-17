@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="ISO-8859-1">
+	<title>Connected greenhouse</title>
+
+    <style>
+    body { width:800px;
+           margin-left:auto;
+           margin-right:auto;
+           background-image: url("bg.jpg"); background-repeat: no-repeat; background-position: top center; background-color: #cccccc; }
+    </style>
+    
+</head>
+<body>
+
+	<h1>Connected greenhouse</h1>
+	
+	<p>Choose greenhouse</p>
+
+	<input name="greenhouse" id="greenhouseid"/>
+	<button onclick="openGreenhouseView()">Go!</button>
+
+	<script>
+	function openGreenhouseView() {
+		var textVal=document.getElementById('greenhouseid').value;
+    	window.open("/greenhouse.html?greenhouse=" + textVal,"_self");
+	}
+	</script>
+</body>
+</html>

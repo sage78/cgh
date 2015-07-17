@@ -1,0 +1,6 @@
+---
+applications:
+- name: connectedgreenhouse
+  memory: 256M
+  host: cgh
+  domain: mybluemix.net

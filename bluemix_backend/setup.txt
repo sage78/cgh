@@ -1,0 +1,13 @@
+Bluemix setup
+- US South
+- Node-Red Starter boilerplate
+
+Cloundant indexes
+- Design doc name: designdoc
+- Index name: greenhouse
+- Search fuction below:
+function(doc){
+ index("greenhouse", doc.greenhouse, {"store": true});
+ index("sortTime", doc.sortTime, {"store": true});
+ index("time", doc.time, {"store": true});
+}

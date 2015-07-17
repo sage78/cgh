@@ -1,0 +1,98 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7; IE=EmulateIE9">
+	
+    <title>Greenhouse data</title>
+	
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+	
+    <!--[if IE]>
+    <script type="text/javascript" src="../excanvas.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="dygraph-combined.js"></script>
+
+    <style>
+    body { width:800px;
+           margin-left:auto;
+           margin-right:auto;
+           background-image: url("bg.jpg"); background-repeat: no-repeat; background-position: top center; background-color: #cccccc; }
+    </style>
+
+  </head>
+  <body>
+    <h3 style="width:800px; text-align: left;">Greenhouse data / Environment</h3>
+
+    <p><a href="javascript:history.back()">Back</a></p>
+
+    <div id="div_environments" style="width:800px;"></div>
+
+    <script type="text/javascript">
+
+	var greenhouse = (location.search.split('greenhouse=')[1]||'').split('&')[0];
+	var environment = (location.search.split('environment=')[1]||'').split('&')[0];
+	var update_intervel = 10000;
+
+	function addEnvironment( greenhouse, name ) {
+
+		var de = document.getElementById('div_environments');
+  		var newdiv = document.createElement('div');
+		newdiv.setAttribute('id',"div_" + name);
+		newdiv.setAttribute('style',"width:800px; height:400px; background:white;");
+		de.appendChild(newdiv);
+	
+		$.get( "http://nrtestps.mybluemix.net/cgh/data/environment?greenhouse=" + greenhouse + "&environment=" + name + "&amount=100", 
+		function( res ) {
+			var d = [];
+
+			for (var i = 0; i < res.length; i++) {
+				var time = new Date(res[i].time);
+				var temp = res[i].temp;
+				var humidity = res[i].humidity;
+				var illuminance = res[i].luminence/10;
+			
+				d.push([time, temp, humidity, illuminance]);
+			}
+						
+			var g = new Dygraph(document.getElementById("div_" + name), d,
+			{
+				title: name,
+				legend: 'always',
+				drawPoints: true,
+				showRoller: true,
+				ylabel: 'Value',
+				xlabel: 'Time',
+				valueRange: [0.0, 110.0],
+				labels: ['Time', 'Temperature', 'Humidity', 'Illuminance/10']
+			});
+
+
+		        setInterval(function() {
+				$.get( "http://nrtestps.mybluemix.net/cgh/data/environment?greenhouse=" + greenhouse + "&environment=" + name + "&amount=1", 
+					function( res ) {
+						var time = new Date(res[0].time);
+						var temp = res[0].temp;
+						var humidity = res[0].humidity;
+						var illuminance = res[0].luminence/10;
+			
+						d.push([time, temp, humidity, illuminance]);
+
+						
+		        			g.updateOptions( { 'file': d } );
+					})
+		        }, update_intervel);
+
+		});
+	}
+
+	addEnvironment(greenhouse, environment);
+
+    </script>
+
+  </body>
+</html>
+
