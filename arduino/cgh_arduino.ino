@@ -75,8 +75,10 @@ Adafruit_CC3000 cc3000 = Adafruit_CC3000(ADAFRUIT_CC3000_CS,
 #define NUMBER_LENGTH       9
 #define DECIMALS            2
 
-// server call interval: 10 min
-# define DATA_SEND_INTERVAL 600000
+// server call interval: 30 min
+# define DATA_SEND_INTERVAL 1800000
+
+// For testing: server call interval: 10 sec
 //# define DATA_SEND_INTERVAL 10000
 
 // measurements to take mean over

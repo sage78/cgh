@@ -35,7 +35,7 @@
 
 	var greenhouse = (location.search.split('greenhouse=')[1]||'').split('&')[0];
 	var environment = (location.search.split('environment=')[1]||'').split('&')[0];
-	var update_intervel = 10000;
+	var update_intervel = 60000; 
 
 	function addEnvironment( greenhouse, name ) {
 
@@ -45,7 +45,7 @@
 		newdiv.setAttribute('style',"width:800px; height:400px; background:white;");
 		de.appendChild(newdiv);
 	
-		$.get( "http://nrtestps.mybluemix.net/cgh/data/environment?greenhouse=" + greenhouse + "&environment=" + name + "&amount=100", 
+		$.get( "http://nrtestps.mybluemix.net/cgh/data/environment?greenhouse=" + greenhouse + "&environment=" + name + "&amount=200", 
 		function( res ) {
 			var d = [];
 
