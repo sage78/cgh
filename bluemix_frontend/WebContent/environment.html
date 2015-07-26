@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7; IE=EmulateIE9">
 	
-    <title>Greenhouse data</title>
+    <title>Thing view - Environment Data</title>
 	
     <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -20,12 +20,12 @@
     body { width:800px;
            margin-left:auto;
            margin-right:auto;
-           background-image: url("bg.jpg"); background-repeat: no-repeat; background-position: top center; background-color: #cccccc; }
+           background-repeat: no-repeat; background-position: top center; background-color: #cccccc; }
     </style>
 
   </head>
   <body>
-    <h3 style="width:800px; text-align: left;">Greenhouse data / Environment</h3>
+    <h3 style="width:800px; text-align: left;">Thing view - Environment Data</h3>
 
     <p><a href="javascript:history.back()">Back</a></p>
 
@@ -33,11 +33,19 @@
 
     <script type="text/javascript">
 
-	var greenhouse = (location.search.split('greenhouse=')[1]||'').split('&')[0];
+	var thing = (location.search.split('thing=')[1]||'').split('&')[0];
 	var environment = (location.search.split('environment=')[1]||'').split('&')[0];
 	var update_intervel = 60000; 
+	
+	function changeBackground()
+    {
+        if(thing >= 0 && thing < 10000) $('body').css('background-image', 'url("bg0.jpg")');
+        else if(thing >= 10000 && thing < 20000) $('body').css('background-image', 'url("bg10000.jpg")');
+        else $('body').css('background-image', 'url("bg.jpg")');
+    }
+    changeBackground();
 
-	function addEnvironment( greenhouse, name ) {
+	function addEnvironment( thing, name ) {
 
 		var de = document.getElementById('div_environments');
   		var newdiv = document.createElement('div');
@@ -45,7 +53,7 @@
 		newdiv.setAttribute('style',"width:800px; height:400px; background:white;");
 		de.appendChild(newdiv);
 	
-		$.get( "http://nrtestps.mybluemix.net/cgh/data/environment?greenhouse=" + greenhouse + "&environment=" + name + "&amount=200", 
+		$.get( "http://nrtestps.mybluemix.net/ct/data/sensor?thing=" + thing + "&sensortype=environments&sensorname=" + name + "&amount=200", 
 		function( res ) {
 			var d = [];
 
@@ -72,7 +80,7 @@
 
 
 		        setInterval(function() {
-				$.get( "http://nrtestps.mybluemix.net/cgh/data/environment?greenhouse=" + greenhouse + "&environment=" + name + "&amount=1", 
+				$.get( "http://nrtestps.mybluemix.net/ct/data/sensor?thing=" + thing + "&sensortype=environments&sensorname=" + name + "&amount=1", 
 					function( res ) {
 						var time = new Date(res[0].time);
 						var temp = res[0].temp;
@@ -89,7 +97,7 @@
 		});
 	}
 
-	addEnvironment(greenhouse, environment);
+	addEnvironment(thing, environment);
 
     </script>
 

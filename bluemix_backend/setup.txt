@@ -2,12 +2,14 @@ Bluemix setup
 - US South
 - Node-Red Starter boilerplate
 
+Node Red requires defining email username and password. Settings are for gmail.
+
 Cloundant indexes
 - Design doc name: designdoc
 - Index name: greenhouse
 - Search fuction below:
 function(doc){
- index("greenhouse", doc.greenhouse, {"store": true});
+ index("thing", doc.thing, {"store": true});
  index("sortTime", doc.sortTime, {"store": true});
  index("time", doc.time, {"store": true});
 }

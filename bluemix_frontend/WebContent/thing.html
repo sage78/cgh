@@ -1,0 +1,357 @@
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7; IE=EmulateIE9">
+	
+    <title>Thing view</title>
+	
+    <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+
+	
+    <!--[if IE]>
+    <script type="text/javascript" src="../excanvas.js"></script>
+    <![endif]-->
+
+    <script type="text/javascript" src="dygraph-combined.js"></script>
+
+    <style>
+    body { width:800px;
+           margin-left:auto;
+           margin-right:auto;
+           background-repeat: no-repeat; background-position: top center; background-color: #cccccc; }
+    </style>
+
+  </head>
+  <body>
+    <h3 style="width:800px; text-align: left;">Thing view</h3>
+
+    <h4 id="title_environment" style="width:800px; text-align: left;">Environments</h4>
+    <div id="div_environmentsummary" style="width:800px;"></div>
+    <div id="div_environments" style="width:800px;"></div>
+
+    <h4 id="title_soil" style="width:800px; text-align: left;">Soils</h4>
+    <div id="div_soilsummary" style="width:800px;"></div>
+    <div id="div_soils" style="width:800px;"></div>
+    
+    <h4 id="title_temp" style="width:800px; text-align: left;">Temperatures</h4>
+    <div id="div_tempsummary" style="width:800px;"></div>
+    <div id="div_temps" style="width:800px;"></div>
+
+    <script type="text/javascript">
+
+    var thing = (location.search.split('thing=')[1]||'').split('&')[0];
+    
+	var update_intervel = 60000;
+
+	
+	// BACKGROUND
+	
+	function changeBackground()
+    {
+        if(thing >= 0 && thing < 10000) $('body').css('background-image', 'url("bg0.jpg")');
+        else if(thing >= 10000 && thing < 20000) $('body').css('background-image', 'url("bg10000.jpg")');
+        else $('body').css('background-image', 'url("bg.jpg")');
+    }
+    changeBackground();
+    
+
+	// SUMMARIZE ENVIRONMENT
+
+	function addEnvironmentSummary( greehouse, name ) {
+	
+		google.load("visualization", "1", {packages:["gauge"]});
+      		google.setOnLoadCallback(drawChart);
+      	
+		function drawChart() {
+
+			$.get( "http://nrtestps.mybluemix.net/ct/data/sensor?thing=" + thing + "&sensortype=environments&sensorname=" + name + "&amount=1", 
+			function( res ) {
+
+				var temp = res[0].temp;
+				var humidity = res[0].humidity;
+				var illuminance = res[0].luminence;
+
+		        	var data1 = google.visualization.arrayToDataTable([
+			        	  ['Label', 'Value'],
+			        	  ['Temperature', temp]
+				]);
+
+
+		        	var data2 = google.visualization.arrayToDataTable([
+			        	  ['Label', 'Value'],
+					  ['Humidity', humidity]
+				]);
+
+		        	var data3 = google.visualization.arrayToDataTable([
+			        	  ['Label', 'Value'],
+					  ['Illuminance', illuminance]
+				]);
+
+
+			        var options1 = {
+			          width: 120, height: 120,
+			          minorTicks: 5,
+				  	  max: 100
+			        };
+
+
+			        var options2 = {
+			          width: 120, height: 120,
+			          minorTicks: 5,
+				   	  max: 100
+			        };
+
+			        var options3 = {
+			          width: 120, height: 120,
+			          minorTicks: 5,
+				  	  max: 1000
+			        };
+
+				var ds = document.getElementById('div_environmentsummary');
+			  	var newdiv = document.createElement('div');
+				newdiv.setAttribute('id',"div_environmentsummary_top_" + name);
+				//newdiv.setAttribute('style',"width:400px; height:120px;");
+				ds.appendChild(newdiv);
+
+				ds = document.getElementById("div_environmentsummary_top_" + name);
+			  	newdiv = document.createElement('div');
+				newdiv.setAttribute('id',"div_environmentsummary_up_" + name);
+				//newdiv.setAttribute('style',"width:400px; height:120px;");
+				newdiv.innerHTML = "<a href='environment.html?thing=" + thing +"&environment=" +name + "'>" + name + "</a>";
+				ds.appendChild(newdiv);
+
+				ds = document.getElementById("div_environmentsummary_top_" + name);
+			  	newdiv = document.createElement('div');
+				newdiv.setAttribute('id',"div_environmentsummary_bottom_" + name);
+				newdiv.setAttribute('style',"width:400px; height:120px;");
+				ds.appendChild(newdiv);
+
+				ds = document.getElementById("div_environmentsummary_bottom_" + name);
+			  	newdiv = document.createElement('div');
+				newdiv.setAttribute('id',"div_environmentsummary_bottom1_" + name);
+				newdiv.setAttribute('style',"width:120px; height:120px; float:left;");
+				ds.appendChild(newdiv);
+
+				ds = document.getElementById("div_environmentsummary_bottom_" + name);
+			  	newdiv = document.createElement('div');
+				newdiv.setAttribute('id',"div_environmentsummary_bottom2_" + name);
+				newdiv.setAttribute('style',"width:120px; height:120px; float:left;");
+				ds.appendChild(newdiv);
+
+				ds = document.getElementById("div_environmentsummary_bottom_" + name);
+			  	newdiv = document.createElement('div');
+				newdiv.setAttribute('id',"div_environmentsummary_bottom3_" + name);
+				newdiv.setAttribute('style',"width:120px; height:120px; float:left;");
+				ds.appendChild(newdiv);
+		
+			        var chart1 = new google.visualization.Gauge(document.getElementById("div_environmentsummary_bottom1_" + name));	
+       				chart1.draw(data1, options1);
+
+			        var chart2 = new google.visualization.Gauge(document.getElementById("div_environmentsummary_bottom2_" + name));	
+       				chart2.draw(data2, options2);
+
+			        var chart3 = new google.visualization.Gauge(document.getElementById("div_environmentsummary_bottom3_" + name));	
+       				chart3.draw(data3, options3);
+				
+			        setInterval(function() {
+					$.get( "http://nrtestps.mybluemix.net/ct/data/sensor?thing=" + thing + "&sensortype=environments&sensorname=" + name + "&amount=1", 
+					function( res ) {
+						var temp = res[0].temp;
+						var humidity = res[0].humidity;
+						var illuminance = res[0].luminence;
+
+			          		data1.setValue(0, 1, temp);
+						chart1.draw(data1, options1);
+
+						data2.setValue(0, 1, humidity);
+						chart2.draw(data2, options2);
+
+						data3.setValue(0, 1, illuminance);
+			          		chart3.draw(data3, options3);
+
+			        	})
+				}, update_intervel);
+				
+		        });
+			
+		}
+	}
+
+	
+	// SUMMARIZE SOIL
+
+	function addSoilSummary( greehouse, name ) {
+	
+		google.load("visualization", "1", {packages:["gauge"]});
+      		google.setOnLoadCallback(drawChart);
+      	
+		function drawChart() {
+
+			$.ajax({
+	     		async: false,
+	     		type: 'GET',
+	     		url: "http://nrtestps.mybluemix.net/ct/data/sensor?thing=" + thing + "&sensortype=soils&sensorname=" + name + "&amount=1",
+	     		success: function(res) {
+
+				var humidity = res[0].humidity;
+
+		        	var data = google.visualization.arrayToDataTable([
+			        	  ['Label', 'Value'],
+			        	  ['Humidity', humidity]
+				]);
+
+			        var options = {
+			          width: 120, height: 120,
+			          minorTicks: 5
+			        };
+
+
+				var ds = document.getElementById('div_soilsummary');
+			  	var newdiv = document.createElement('div');
+				newdiv.setAttribute('id',"div_soilsummary_top_" + name);
+				newdiv.setAttribute('style',"width:120px; height:140px; float: left;");
+				ds.appendChild(newdiv);
+
+				ds = document.getElementById("div_soilsummary_top_" + name);
+			  	newdiv = document.createElement('div');
+				newdiv.setAttribute('id',"div_soilsummary_up_" + name);
+				newdiv.setAttribute('style',"width:120px; height:20px;");
+				newdiv.innerHTML = "<a href='soil.html?thing=" + thing +"&soil=" +name + "'>" + name + "</a>";
+				ds.appendChild(newdiv);
+
+				ds = document.getElementById("div_soilsummary_top_" + name);
+			  	newdiv = document.createElement('div');
+				newdiv.setAttribute('id',"div_soilsummary_bottom_" + name);
+				newdiv.setAttribute('style',"width:120px; height:120px;");
+				ds.appendChild(newdiv);
+		
+			        var chart = new google.visualization.Gauge(document.getElementById("div_soilsummary_bottom_" + name));
+	
+       				chart.draw(data, options);
+				
+			        setInterval(function() {
+					$.get( "http://nrtestps.mybluemix.net/ct/data/sensor?thing=" + thing + "&sensortype=soils&sensorname=" + name + "&amount=1", 
+					function( res ) {
+				  		var humidity = res[0].humidity;
+			          		data.setValue(0, 1, humidity);
+			          		chart.draw(data, options);
+			        	})
+				}, update_intervel);
+			}});
+			
+		}
+	}
+
+	
+	// SUMMARIZE TEMP
+
+	function addTempSummary( greehouse, name ) {
+	
+		google.load("visualization", "1", {packages:["gauge"]});
+      		google.setOnLoadCallback(drawChart);
+      	
+		function drawChart() {
+
+			$.ajax({
+	     		async: false,
+	     		type: 'GET',
+	     		url: "http://nrtestps.mybluemix.net/ct/data/sensor?thing=" + thing + "&sensortype=temps&sensorname=" + name + "&amount=1",
+	     		success: function(res) {
+
+				var temp = res[0].temp;
+
+		        	var data = google.visualization.arrayToDataTable([
+			        	  ['Label', 'Value'],
+			        	  ['Temp', temp]
+				]);
+
+			        var options = {
+			          min: -50, max: 60,
+			          width: 120, height: 120,
+			          minorTicks: 5
+			        };
+
+
+				var ds = document.getElementById('div_tempsummary');
+			  	var newdiv = document.createElement('div');
+				newdiv.setAttribute('id',"div_tempsummary_top_" + name);
+				newdiv.setAttribute('style',"width:120px; height:140px; float: left;");
+				ds.appendChild(newdiv);
+
+				ds = document.getElementById("div_tempsummary_top_" + name);
+			  	newdiv = document.createElement('div');
+				newdiv.setAttribute('id',"div_tempsummary_up_" + name);
+				newdiv.setAttribute('style',"width:120px; height:20px;");
+				newdiv.innerHTML = "<a href='temp.html?thing=" + thing +"&temp=" +name + "'>" + name + "</a>";
+				ds.appendChild(newdiv);
+
+				ds = document.getElementById("div_tempsummary_top_" + name);
+			  	newdiv = document.createElement('div');
+				newdiv.setAttribute('id',"div_tempsummary_bottom_" + name);
+				newdiv.setAttribute('style',"width:120px; height:120px;");
+				ds.appendChild(newdiv);
+		
+			        var chart = new google.visualization.Gauge(document.getElementById("div_tempsummary_bottom_" + name));
+	
+       				chart.draw(data, options);
+				
+			        setInterval(function() {
+					$.get( "http://nrtestps.mybluemix.net/ct/data/sensor?thing=" + thing + "&sensortype=temps&sensorname=" + name + "&amount=1", 
+					function( res ) {
+				  		var temp = res[0].temp;
+			          		data.setValue(0, 1, temp);
+			          		chart.draw(data, options);
+			        	})
+				}, update_intervel);
+			}});
+			
+		}
+	}
+	
+	
+
+	// ANALYZE DATA STRUCTURE AND VISUALIZE
+
+	$.ajax({
+	     async: false,
+	     type: 'GET',
+	     url: "http://nrtestps.mybluemix.net/ct/data/structure?thing=" + thing,
+	     success: function(res) {
+	    	 
+	     if(res.environments && res.environments.length > 0) {
+			 for(var i = 0; i < res.environments.length; i++ ) {
+				addEnvironmentSummary(thing, res.environments[i]);
+			 }
+	     }
+	     else {
+	    	 $("#title_environment").hide();
+	     }
+
+	     if(res.soils && res.soils.length > 0) {
+			 for(var i = 0; i < res.soils.length; i++ ) {
+				addSoilSummary(thing, res.soils[i]);
+			 }
+	     }
+	     else {
+	    	 $("#title_soil").hide();
+	     }
+		 
+	     if(res.temps && res.temps.length > 0) {
+			 for(var i = 0; i < res.temps.length; i++ ) {
+				addTempSummary(thing, res.temps[i]);
+			 }
+	     }
+	     else {
+	    	 $("#title_temp").hide();
+	     }
+     	}
+	});
+
+
+    </script>
+
+  </body>
+</html>
+

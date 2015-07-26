@@ -4,7 +4,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE7; IE=EmulateIE9">
 	
-    <title>Thing view - Soil data</title>
+    <title>Thing view - Temperature data</title>
 	
     <script src="http://code.jquery.com/jquery-1.10.2.js"></script>
     <script type="text/javascript" src="https://www.google.com/jsapi"></script>
@@ -25,16 +25,16 @@
 
   </head>
   <body>
-    <h3 style="width:800px; text-align: left;">Thing view - Soil data</h3>
+    <h3 style="width:800px; text-align: left;">Thing view - Temperature data</h3>
 
     <p><a href="javascript:history.back()">Back</a></p>
 
-    <div id="div_soils" style="width:800px;"></div>
+    <div id="div_temps" style="width:800px;"></div>
 
     <script type="text/javascript">
 
 	var thing = (location.search.split('thing=')[1]||'').split('&')[0];
-	var soil = (location.search.split('soil=')[1]||'').split('&')[0];
+	var temp = (location.search.split('temp=')[1]||'').split('&')[0];
 	var update_intervel = 60000;
 
 	function changeBackground()
@@ -45,23 +45,23 @@
     }
     changeBackground();
 	
-	function addSoil( thing, name ) {
+	function addTemp( thing, name ) {
 
-		var de = document.getElementById('div_soils');
+		var de = document.getElementById('div_temps');
   		var newdiv = document.createElement('div');
 		newdiv.setAttribute('id',"div_" + name);
 		newdiv.setAttribute('style',"width:800px; height:400px; background:white;");
 		de.appendChild(newdiv);
 	
-		$.get( "http://nrtestps.mybluemix.net/ct/data/sensor?thing=" + thing + "&sensortype=soils&sensorname=" + name + "&amount=200", 
+		$.get( "http://nrtestps.mybluemix.net/ct/data/sensor?thing=" + thing + "&sensortype=temps&sensorname=" + name + "&amount=200", 
 		function( res ) {
 			var d = [];
 
 			for (var i = 0; i < res.length; i++) {
 				var time = new Date(res[i].time);
-				var humidity = res[i].humidity;
+				var temp = res[i].temp;
 			
-				d.push([time, humidity]);
+				d.push([time, temp]);
 			}
 						
 			var g = new Dygraph(document.getElementById("div_" + name), d,
@@ -72,18 +72,17 @@
 				showRoller: true,
 				ylabel: 'Value',
 				xlabel: 'Time',
-				valueRange: [0.0, 110.0],
-				labels: ['Time', 'Humidity']
+				valueRange: [-50.0, +60.0],
+				labels: ['Time', 'Temp']
 			});
 
-
 		    setInterval(function() {
-				$.get( "http://nrtestps.mybluemix.net/ct/data/sensor?thing=" + thing + "&sensortype=soils&sensorname=" + name + "&amount=1", 
+				$.get( "http://nrtestps.mybluemix.net/ct/data/sensor?thing=" + thing + "&sensortype=temps&sensorname=" + name + "&amount=1", 
 					function( res ) {
 						var time = new Date(res[0].time);
-						var humidity = res[0].humidity;
+						var temp = res[0].temp;
 			
-						d.push([time, humidity]);
+						d.push([time, temp]);
 
 						
 		        		g.updateOptions( { 'file': d } );
@@ -93,7 +92,7 @@
 		});
 	}
 
-	addSoil(thing, soil);
+	addTemp(thing, temp);
 
     </script>
 

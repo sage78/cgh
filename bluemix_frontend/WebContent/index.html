@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="ISO-8859-1">
-	<title>Connected greenhouse</title>
+	<title>Connected things</title>
 
     <style>
     body { width:800px;
@@ -14,17 +14,17 @@
 </head>
 <body>
 
-	<h1>Connected greenhouse</h1>
+	<h1>Connected things</h1>
 	
-	<p>Choose greenhouse</p>
+	<p>Choose device to view</p>
 
-	<input name="greenhouse" id="greenhouseid"/>
-	<button onclick="openGreenhouseView()">Go!</button>
+	<input name="thing" id="thingid"/>
+	<button onclick="openThingView()">Go!</button>
 
 	<script>
-	function openGreenhouseView() {
-		var textVal=document.getElementById('greenhouseid').value;
-    	window.open("/greenhouse.html?greenhouse=" + textVal,"_self");
+	function openThingView() {
+		var textVal=document.getElementById('thingid').value;
+    	window.open("/thing.html?thing=" + textVal,"_self");
 	}
 	</script>
 </body>
